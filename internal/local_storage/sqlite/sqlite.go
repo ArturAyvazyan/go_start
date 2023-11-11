@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/mattn/go-sqlite3"
-	"go_start/internal/storage"
+	"go_start/internal/local_storage"
 )
 
 type Storage struct {
@@ -13,7 +13,7 @@ type Storage struct {
 }
 
 func New(storagePath string) (*Storage, error) {
-	const op = "storage.sqlite.New"
+	const op = "local_storage.sqlite.New"
 
 	db, err := sql.Open("sqlite3", storagePath)
 	if err != nil {
@@ -40,7 +40,7 @@ func New(storagePath string) (*Storage, error) {
 }
 
 func (s *Storage) SaveURL(urlToSave string, alias string) (int64, error) {
-	const op = "storage.sqlite.SaveURL"
+	const op = "local_storage.sqlite.SaveURL"
 
 	stmt, err := s.db.Prepare("INSERT INTO url(url, alias) VALUES(?, ?)")
 	if err != nil {
@@ -50,7 +50,7 @@ func (s *Storage) SaveURL(urlToSave string, alias string) (int64, error) {
 	res, err := stmt.Exec(urlToSave, alias)
 	if err != nil {
 		if sqliteErr, ok := err.(sqlite3.Error); ok && sqliteErr.ExtendedCode == sqlite3.ErrConstraintUnique {
-			return 0, fmt.Errorf("%s: %w", op, storage.ErrURLExists)
+			return 0, fmt.Errorf("%s: %w", op, local_storage.ErrURLExists)
 		}
 
 		return 0, fmt.Errorf("%s: %w", op, err)
@@ -65,7 +65,7 @@ func (s *Storage) SaveURL(urlToSave string, alias string) (int64, error) {
 }
 
 func (s *Storage) GetURL(alias string) (string, error) {
-	const op = "storage.sqlite.GetURL"
+	const op = "local_storage.sqlite.GetURL"
 
 	stmt, err := s.db.Prepare("SELECT url FROM url WHERE alias = ?")
 	if err != nil {
@@ -77,7 +77,7 @@ func (s *Storage) GetURL(alias string) (string, error) {
 	err = stmt.QueryRow(alias).Scan(&resURL)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return "", storage.ErrURLNotFound
+			return "", local_storage.ErrURLNotFound
 		}
 
 		return "", fmt.Errorf("%s: execute statement: %w", op, err)

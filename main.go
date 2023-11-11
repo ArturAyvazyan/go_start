@@ -7,7 +7,7 @@ import (
 	"go_start/internal/http-server/middleware/handlers/url/save"
 	mwLogger "go_start/internal/http-server/middleware/logger"
 	"go_start/internal/lib/logger/sl"
-	"go_start/internal/storage/sqlite"
+	"go_start/internal/local_storage/sqlite"
 	"log/slog"
 	"net/http"
 	"os"
@@ -24,7 +24,7 @@ func main() {
 	log := setupLogger(cfg.Env)
 
 	log.Info(
-		"starting url-shortener",
+		"starting go_start",
 		slog.String("env", cfg.Env),
 		slog.String("version", "123"),
 	)
@@ -32,7 +32,7 @@ func main() {
 
 	storage, err := sqlite.New(cfg.StoragePath)
 	if err != nil {
-		log.Error("failed to init storage", sl.Err(err))
+		log.Error("failed to init local_storage", sl.Err(err))
 		os.Exit(1)
 	}
 	router := chi.NewRouter()

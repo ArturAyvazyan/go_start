@@ -1,5 +1,5 @@
 env: local
-storage_path: ./storage/storage.db
+storage_path: ./local_storage/local_storage.db
 server:
   address: localhost:8080
   timeout: 4s

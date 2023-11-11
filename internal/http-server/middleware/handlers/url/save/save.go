@@ -6,12 +6,12 @@ import (
 	"github.com/go-chi/render"
 	"github.com/go-playground/validator/v10"
 
-	"golang.org/x/exp/slog"
+	"log/slog"
 
 	resp "go_start/internal/lib/api/response"
 	"go_start/internal/lib/logger/sl"
 	"go_start/internal/lib/random"
-	"go_start/internal/storage"
+	"go_start/internal/local_storage"
 
 	"io"
 	"net/http"
@@ -80,7 +80,7 @@ func New(log *slog.Logger, urlSaver URLSaver) http.HandlerFunc {
 		}
 
 		id, err := urlSaver.SaveURL(req.URL, alias)
-		if errors.Is(err, storage.ErrURLExists) {
+		if errors.Is(err, local_storage.ErrURLExists) {
 			log.Info("url already exists", slog.String("url", req.URL))
 
 			render.JSON(w, r, resp.Error("url already exists"))

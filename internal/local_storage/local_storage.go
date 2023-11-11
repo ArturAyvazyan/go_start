@@ -1,4 +1,4 @@
-package storage
+package local_storage
 
 import "errors"
 
